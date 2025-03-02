@@ -1,50 +1,20 @@
 #include "system.h"
 #include "qubit.h"
+#include <cmath>
 
-Matrix<CD,Dynamic,1> System::TensorProduct(const Matrix<CD,Dynamic,1> a ,const Matrix<CD,2,1> b ){
-    int size = a.rows()*b.rows();
-    Matrix<CD,Dynamic,1> result;
-    result.resize(size);
-    for (int i = 0; i < a.rows(); i++) {
-        for (int j = 0; j < b.rows(); j++) {
-            result(i * b.rows() + j) = a(i) * b(j);
-        }
-    }
-    return result;
-}
-
-void System::printBinary(int i, int n) {
-    for (int j = n - 1; j >= 0; j--) {
+void printBinary(int i, int n) {
+    for (int j = 0; j < n; j++) { // LSB-first (Qiskit convention)
         cout << ((i >> j) & 1);
     }
 }
 
-VI System::toBinary (int i, int n) {
-    vector<int> v;
-    for (int j = n - 1; j >= 0; j--) {
-        v.push_back(((i >> j) & 1));
-    }
-    return v;
-}
-
-int System::binaryVectorToInt(const VI& binaryVector) {
-    int result = 0;
-    int size = binaryVector.size();
-    for (int i = 0; i < size; ++i) {
-        result += binaryVector[i] * std::pow(2, size - 1 - i);
-    }
-    return result;
-}
-System:: System(int num_qubits):n(num_qubits) {
-    s.resize(pow(2,n));
+System::System(int num_qubits) : n(num_qubits) {
+    s.resize(pow(2, n));
     s.setZero();
-    s(0)=1;
-    qubits.reserve(n);
-    for(int i=0; i<n; i++) qubits.push_back(new Qubit(this));
-}
-
-Qubit& System::operator()(int index) {
-        return *qubits.at(index);
+    s(0) = 1;
+    for (int i = 0; i < n; i++) {
+        qubits.emplace_back(this, i);
+    }
 }
 
 void System::PrintDiracNotation(int u) {
@@ -56,7 +26,7 @@ void System::PrintDiracNotation(int u) {
             double x = round(s(i,0).real()/0.001)*0.001;
             if(x>=0 && !first) cout << "+ ";
             if(x<0 && !first) cout << "- ";
-            cout << x << "|";
+            cout << abs(x) << "|";
             if(first) first=false;
         }
         else {
@@ -64,7 +34,7 @@ void System::PrintDiracNotation(int u) {
             double y= round(s(i,0).imag()/0.001)*0.001;
             if(x>=0 && !first) cout << "+ ";
             if(x<0 && !first) cout << "- ";
-            cout << "( "<< x << " + " << y << "i )|";
+            cout << "( "<< abs(x) << " + " << abs(y) << "i )|";
             if(first) first=false;
         }
         printBinary(i,n);
@@ -72,38 +42,77 @@ void System::PrintDiracNotation(int u) {
     }
     cout << endl;
 }
-
-//useless funkcija k ubistvu nebi semela obstajat!!!
-void System::ProbabilityOfMeasuring(string bin) {
-    int x = stoi(bin,nullptr,2);
-    if(x>pow(2,n)) cout << "Error invalid input" << endl;
-    else cout << "Probability Of Measuring |"<<bin <<"> : " << pow(abs(s(x,0)),2) << endl;
+void System::SingleQubitGate(int target, Matrix<CD,2,2> M){
+    Matrix<CD, Dynamic, Dynamic> gate = Matrix<CD, 1, 1>::Identity();
+    for (int i = 0; i < n; i++) {
+        if (i == target) gate = kroneckerProduct(gate, M).eval();
+        else gate = kroneckerProduct(gate, Matrix<CD, 2, 2>::Identity()).eval();
+    }
+    s = gate * s;
 }
 
-void System::Update(){
-    Matrix<CD,Dynamic,1> newsys;
-    newsys.resize(2);
-    int count = 1;
-    for(auto q : qubits) {
-        if(count==1){
-            newsys(0,0)=q->superposition(0,0);
-            newsys(1,0)=q->superposition(1,0);
-        }
-        else newsys=TensorProduct(newsys,q->superposition);
-        count++;
-    }
-    s=newsys;
+void System::HGate(int target) {
+    Matrix<CD, 2, 2> H;
+    H << inv_sqrt2, inv_sqrt2,
+            inv_sqrt2, -inv_sqrt2;
+    SingleQubitGate(target, H);
+}
+void System::XGate(int target){
+    Matrix<double,2,2> X;
+    X << 0,1,
+        1,0;
+    SingleQubitGate(target, X);
+}
+void System::YGate(int target){
+    Matrix<CD,2,2> Y;
+    Y << 0,-i,
+        i,0;
+    SingleQubitGate(target, Y);
+}
+void System::ZGate(int target){
+    Matrix<CD,2,2> Z;
+    Z << 1,0,
+        0,-1;
+    SingleQubitGate(target, Z);
+}
+void System::SGate(int target){
+    Matrix<CD,2,2> S;
+    S << 1,0,
+        0, i;
+    SingleQubitGate(target, S);
+}
+void System::SDaggerGate(int target){
+    Matrix<CD,2,2> SD;
+    SD << 1,0,
+        0,-i;
+    SingleQubitGate(target, SD);
+}
+void System::TGate(int target){
+    Matrix<CD,2,2> T;
+    T << 1,0,
+        0, exp(i * M_PI / 4.0);
+    SingleQubitGate(target, T);
+}
+void System::TDaggerGate(int target){
+    Matrix<CD,2,2> TD;
+    TD << 1,0,
+        0, exp(-i * M_PI / 4.0);
+    SingleQubitGate(target, TD);
 }
 
-void System::CNOT(int control, int target){
-    int numOfStates = 1 << n;
-    for (int i = 0; i < numOfStates; i++) {
-        vector<int> vi = toBinary(i,n);
-        if (vi[control]) {
-            if(vi[target]) vi[target]=0;
-            else vi[target]=1;
-            int t = binaryVectorToInt(vi);
-            if(i<t) swap(s(i), s(t));
+void System::CNOT(int control, int target) {
+    int num_states = s.size();
+    for (int i = 0; i < num_states; i++) {
+        // Check if control qubit is |1⟩
+        if ((i >> (n - 1 - control)) & 1) {
+            int toggled = i ^ (1 << (n - 1 - target)); // Flip target qubit
+            if (i < toggled) {
+                swap(s(i), s(toggled));
+            }
         }
     }
+}
+
+void System::SWAP(int q0, int q1) {
+
 }

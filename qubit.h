@@ -24,22 +24,9 @@ class System;
 
 class Qubit {
 public:
-    Matrix<CD, 2, 1> superposition;
     System* system;
-    Qubit(System* sys);
-    //void PrintDiracNotation();
-    void MeasureQubit();
-    void XGate();
-    void YGate();
-    void ZGate();
-    void HGate();
-    void SGate();
-    void SDaggerGate();
-    void TGate();
-    void TDaggerGate();
-    double ProbabilityOfMeasuring(int x);
-    void ArbitraryGateCD(Matrix<CD,2,2> m);
-    void ArbitraryGateDouble(Matrix<double,2,2> m);
+    int index;
+    Qubit(System* sys, int index);
 };
 
-#endif // QUBIT_H
+#endif

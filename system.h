@@ -1,25 +1,30 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 #include "qubit.h"
+#include <eigen3/unsupported/Eigen/KroneckerProduct>
 
 class System {
 public:
-    int n = 0;
-    Matrix<CD,Dynamic,1> s;
-    vector<Qubit*> qubits;
+    int n;
+    Matrix<CD, Dynamic, 1> s;
+    vector<Qubit> qubits;
+
     System(int num_qubits);
-    Qubit& operator()(int index);
-    //void AddQubit(Qubit &q);
     void PrintDiracNotation(int u = 0);
-    //string formatCoefficient(CD c);
-    void ProbabilityOfMeasuring(string bin);
+
+    void SingleQubitGate(int target, Matrix<CD,2,2> m);
+    void HGate(int target);
+    void XGate(int target);
+    void YGate(int target);
+    void ZGate(int target);
+    void SGate(int target);
+    void SDaggerGate(int target);
+    void TGate(int target);
+    void TDaggerGate(int target);
+
+
     void CNOT(int control, int target);
-    void Update();
-private:
-    Matrix<CD,Dynamic,1> TensorProduct(const Matrix<CD,Dynamic,1> a ,const Matrix<CD,2,1> b );
-    void printBinary(int i, int n);
-    VI toBinary (int i, int n);
-    int binaryVectorToInt(const VI& binaryVector);
+    void SWAP(int q0, int q1);
 };
 
 #endif
