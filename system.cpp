@@ -3,9 +3,7 @@
 #include <cmath>
 
 void printBinary(int i, int n) {
-    for (int j = 0; j < n; j++) { // LSB-first (Qiskit convention)
-        cout << ((i >> j) & 1);
-    }
+    for (int j = 0; j < n; j++) cout << ((i >> j) & 1);
 }
 
 System::System(int num_qubits) : n(num_qubits) {
@@ -103,16 +101,36 @@ void System::TDaggerGate(int target){
 void System::CNOT(int control, int target) {
     int num_states = s.size();
     for (int i = 0; i < num_states; i++) {
-        // Check if control qubit is |1⟩
         if ((i >> (n - 1 - control)) & 1) {
             int toggled = i ^ (1 << (n - 1 - target)); // Flip target qubit
-            if (i < toggled) {
-                swap(s(i), s(toggled));
-            }
+            if (i < toggled) swap(s(i), s(toggled));
         }
     }
 }
 
 void System::SWAP(int q0, int q1) {
+    CNOT(q0,q1);
+    CNOT(q1,q0);
+    CNOT(q0,q1);
+}
 
+void System::CCNOT(int control1, int control2, int target){
+    int num_states = s.size();
+    for (int i = 0; i < num_states; i++) {
+        if (((i >> (n - 1 - control1)) & 1) && ((i >> (n - 1 - control2)) & 1)) {
+            int toggled = i ^ (1 << (n - 1 - target)); // Flip target qubit
+            if (i < toggled) swap(s(i), s(toggled));
+        }
+    }
+}
+
+vector<double> System::measureQubit(int qubit) {
+    vector<double> v;
+
+    return v;
+}
+vector<double> System::measureAll() {
+    vector<double> v;
+
+    return v;
 }

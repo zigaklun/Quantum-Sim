@@ -4,13 +4,11 @@ int main() {
 
     System system(3);
     system.PrintDiracNotation();
-    system.HGate(0);
-    system.TGate(2);
-    system.YGate(1);
-    system.SDaggerGate(0);
-    system.CNOT(1, 0);
-    system.TDaggerGate(1);
+    system.XGate(0);
+    system.XGate(1);
     system.PrintDiracNotation(1);
+    system.CCNOT(0,1,2);
+    system.PrintDiracNotation(2);
 
     return 0;
 }
