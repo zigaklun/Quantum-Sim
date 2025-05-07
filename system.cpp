@@ -1,6 +1,7 @@
 #include "system.h"
 #include "qubit.h"
 #include <cmath>
+#include <random>
 
 void printBinary(int i, int n) {
     for (int j = 0; j < n; j++) cout << ((i >> j) & 1);
@@ -23,8 +24,15 @@ void System::PrintDiracNotation(int u) {
         if(s(i,0).imag()==0){
             double x = round(s(i,0).real()/0.001)*0.001;
             if(x>=0 && !first) cout << "+ ";
-            if(x<0 && !first) cout << "- ";
+            if(x<0) cout << "- ";
             cout << abs(x) << "|";
+            if(first) first=false;
+        }
+        else if(s(i,0).real()==0){
+            double y= round(s(i,0).imag()/0.001)*0.001;
+            if(y>=0 && !first) cout << "+ ";
+            if(y<0) cout << "- ";
+            cout << abs(y) << "i |";
             if(first) first=false;
         }
         else {
@@ -124,13 +132,62 @@ void System::CCNOT(int control1, int control2, int target){
     }
 }
 
-vector<double> System::measureQubit(int qubit) {
-    vector<double> v;
+int System::measureQubit(int qubit) {
 
-    return v;
+    int num_states = s.size();
+    double probs_of_one = 0.0;
+    for (int i = 0; i < num_states; i++) {
+        // z^2 = (a^2 - b^2)+2ab for complex numbers
+        if ((i >> (n - 1 - qubit)) & 1){
+            probs_of_one += norm(s(i));
+        }
+    }
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_real_distribution<> dist(0.0,1.0);
+
+    double r = dist(gen);
+    int measurment;
+    if(r>=1-probs_of_one) measurment=1;
+    else measurment=0;
+
+    double sum;
+    for (int i = 0; i < num_states; i++) {
+        if(((i >> (n - 1 - qubit)) & 1)==measurment)
+            sum += norm(s(i));
+        else s(i)=CD(0,0);
+    }
+
+    double constA = 1.0 / sqrt(sum);
+    for (int i = 0; i < num_states; i++) {
+        s(i) *= constA;
+    }
+
+    return measurment;
 }
-vector<double> System::measureAll() {
-    vector<double> v;
+void System::measureAll() {
 
-    return v;
+    int num_states = s.size();
+    vector<double> probs;
+    for (int i=0; i<num_states-1; i++) {
+        if(i==0) probs.push_back(norm(s(i)));
+        else probs.push_back(norm(s(i))+probs[i-1]);
+    }
+    probs.push_back(1);
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_real_distribution<> dist(0.0,1.0);
+
+    double r = dist(gen);
+
+    for (int i=0; i<num_states; i++) {
+        if(r<=probs[i]){
+            s(i)=1;
+            r=2;
+        }
+        else s(i)=0;
+    }
+    return;
 }

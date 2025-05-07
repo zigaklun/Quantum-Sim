@@ -6,8 +6,8 @@
 #include <vector>
 #include <random>
 #include <cmath>
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Core>
+#include <Eigen/Dense>
 
 using namespace std;
 using namespace Eigen;

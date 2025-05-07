@@ -27,8 +27,8 @@ public:
     void SWAP(int q0, int q1);
     void CCNOT(int control1, int control2, int target); //Toffolie gate
 
-    vector<double> measureQubit(int qubit);
-    vector<double> measureAll();
+    int measureQubit(int qubit);
+    void measureAll();
 
 };
 
