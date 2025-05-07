@@ -33,7 +33,7 @@ If its not working replace the path to eigen with your path.
 
 ### Run the program
 ```bash
-./main.cpp
+./main
 ```
 
 ### Project Structure
