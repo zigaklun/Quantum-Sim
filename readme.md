@@ -42,7 +42,6 @@ If its not working replace the path to eigen with your path.
 - **`qubit.cpp` and `qubit.h`**: Define the `Qubit` class for individual qubits.
 - **`test_env.cpp` and `test_env.h`**: Define the `Test_env` class for simulating measurements.
 - **`main.cpp`**: Entry point for the program. Use this file to build and test quantum algorithms.
-- **`stuff/`**: Contains additional test files and experimental code.
 
 
 ### References
