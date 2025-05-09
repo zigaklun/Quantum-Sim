@@ -9,12 +9,7 @@ We define them as column vectors
 #### Superposition
 
 It means that a quantum particle is in two states simultaneously. For example a photon of light being both horizontally and vertically polarized.
-A qubit is in superposition if it is both
-```math
-\vert 0 \rangle \textrm{  and  } \vert 1 \rangle
-``` at the same time.
-
-Mathematically we can represent a qubit as a column vector of alpha and beta.
+A qubit is in superposition if it is both $\vert 0 \rangle \textrm{  and  } \vert 1 \rangle$ at the same time. Mathematically we can represent a qubit as a column vector of alpha and beta.
 ```math
 \vert \psi \rangle =\begin {pmatrix}\alpha\\\beta\end{pmatrix}
 ```
@@ -29,7 +24,11 @@ If we have a photon that is in a superposition of both vertically and horizontal
 
 The same thing happens when we measure qubits.
 
-When we measure a qubit we only measure a 0 or a 1. If we were to measure the qubit  $\vert \psi \rangle =\begin {pmatrix}\alpha\\\beta\end{pmatrix}$ we would not measure $\alpha$ or $\beta$, we would still only measure a 0 or a 1.
+When we measure a qubit we only measure a 0 or a 1. If we were to measure the qubit  
+```math
+\vert \psi \rangle=\begin{pmatrix}\alpha\\ \beta\end{pmatrix}
+```
+we would not measure $\alpha$ or $\beta$, we would still only measure a 0 or a 1.
 
 Those number of $\alpha$ and $\beta$ tell us the probability of measuring 0 or 1.
 
@@ -83,9 +82,11 @@ To apply the gate to the qubit we can mathematically multiply the matrix that re
 ```math
 X\vert\psi\rangle = \begin {pmatrix}0&&1\\1 && 0\end{pmatrix} \begin{pmatrix}\alpha\\\beta\end{pmatrix} = \begin {pmatrix}\beta\\\alpha\end{pmatrix}
 ```
-Let $U=\begin {pmatrix}a&&b\\c && d\end{pmatrix}$ , be an arbitrary gate.
-
-If we want to apply the arbitrary gate to the qubit we still look at the matrix but instead of using matrix multiplication we look at the columns of the matrix.
+Let 
+```math
+U=\begin {pmatrix}a&&b\\c && d\end{pmatrix}
+```
+be an arbitrary gate. If we want to apply the arbitrary gate to the qubit we still look at the matrix but instead of using matrix multiplication we look at the columns of the matrix.
 
 The first column of the matrix indicates the column vector the $\vert0\rangle$ state becomes after applying the gate. The same goes for the second column and the $\vert1\rangle$ state becomes. Then we can factor out both $\vert0\rangle$ and $\vert1\rangle$ states to get back into Dirac notation.
 ```math
@@ -114,7 +115,7 @@ Global phase is when the entire qubit is multiplied by a complex number.
 As it turns out global phase is physically irrelevant.
 
 ##### Relative Phase
-Relative phase is when only the $\vert1\rangle$ state is multiplied by a complex number. Unlike global phase relative phase is extremely important and it matters in our calculations. It is when a $\vert1\rangle$state has a factor of a complex number and it rotates our qubit around the z-axis.
+Relative phase is when only the $\vert 1 \rangle$ state is multiplied by a complex number. Unlike global phase relative phase is extremely important and it matters in our calculations. It is when a $\vert 1 \rangle$ state has a factor of a complex number and it rotates our qubit around the z-axis.
 
 ##### But what if we have different complex number both in a $\vert1\rangle$ and $\vert0\rangle$ state?
 
@@ -282,7 +283,7 @@ The $\psi$ states are used to represent the state of the system at different poi
 The CNOT gate acts on two qubits. One is the target and and the other control qubit.
 The CNOT gate applies an X gate to the target qubit if the control qubit is a 1. If control is 0 it does nothing.
 
-Another way of describing the is as a generalization of the classical gate, since the action of the gate may be summarized as $\vert A,B\rangle\rightarrow\vert A,B⊕A\rangle$ , where ⊕ is addition modulo two, which is exactly what the gate does. That is, the control qubit and the target qubit are ed and stored in the target qubit. Yet another way of describing the action of the is to give a matrix representation, as shown in the bottom right of Figure 1.6. You can easily verify that the first column of $U_{CN}$ describes the transformation that occurs to $\vert00\rangle$, and similarly for the other computational basis states, $\vert01\rangle$ , $\vert10\rangle$ , and $\vert11\rangle$. As for the single qubit case, the requirement that probability be conserved is expressed in the fact that $U_{CN}$ is a unitary matrix, that is, $U^{\dagger}_{CN}U_{CN} = I$.
+Another way of describing the is as a generalization of the classical gate, since the action of the gate may be summarized as $\vert A,B\rangle\rightarrow\vert A,B⊕A\rangle$ , where ⊕ is addition modulo two, which is exactly what the gate does. That is, the control qubit and the target qubit are ed and stored in the target qubit. Yet another way of describing the action of the is to give a matrix representation, as shown in the bottom right of Figure 1.6. You can easily verify that the first column of $U_{CN}$ describes the transformation that occurs to $\vert00\rangle$, and similarly for the other computational basis states, $\vert01\rangle$ , $\vert10\rangle$ , and $\vert11\rangle$. As for the single qubit case, the requirement that probability be conserved is expressed in the fact that $U_{CN}$ is a unitary matrix, that is, $U^{\dagger}U_{CN}=I$ .
 
 Using three CNOT gates on two qubits interchangeably we can implement SWAP gate.
 
